@@ -1,0 +1,183 @@
+Ввод
+	in := bufio.NewReader(os.Stdin)
+	var testCount int
+    fmt.Fscan(in, &testCount)
+
+    for i := 0; i < testCount; i++ {
+        var n, m int
+        fmt.Fscan(in, &n, &m)
+    }
+
+Вывод
+ 	out := bufio.NewWriter(os.Stdout)
+    defer out.Flush()
+    fmt.Fprintln(out, n + m)
+
+
+Сравнение массивов или слайсов или структур или мап
+	reflect.DeepEqual(mapDefault, localMap)
+
+Копирование массива
+	temp := make([]int, len(stack))
+    copy(temp, stack)
+
+Структура
+	type Sportsman struct {
+		time     int
+		place    int
+		numInput int
+	}
+
+Объявление
+		var arrGuys []Sportsman
+		arrGuys = make([]Sportsman, numGuys)
+
+Объявление массива c элементом 1
+	newRow := []int{1}
+
+Мапа, ключ - число, значение - массив строк
+	m := make(map[int][]string, 10)
+    m[0] = []string{{'a', 'b', 'c'}
+
+    // рекомендуемое создание с обозначением размера
+	m := make(map[int]string, 10)
+	// создание мапы с элементами
+	m := map[int]string{1: "hello", 2: "world"}
+
+Перевод строки в число
+	i, err := strconv.Atoi("-42")
+	s := strconv.Itoa(-42)
+
+Сортировка
+	//массив
+	sort.Slice(tab, func(i, j int) bool {
+			return tab[i] < tab[j]
+	})
+	//массив структур
+	sort.Slice(tab, func(i, j int) bool {
+			return tab[i].numInput < tab[j].numInput
+	})
+	//двумерный массив - сортируем  строки по значению столбца k
+	sort.SliceStable(tab, func(i, j int) bool {
+			return tab[i][k] < tab[j][k]
+	})
+
+Удаление из слайса дублированных элементов
+	//сначала сортируем
+	sort.SliceStable(userIDs, func(i, j int) bool { return userIDs[i] < userIDs[j] })
+	uniqPointer := 0
+	//потом сдвигаем
+	for i := 1; i < len(userIDs); i++ {
+		//если нашли новый элемент, вставляем
+		if userIDs[uniqPointer] != userIDs[i] {
+			uniqPointer++
+			userIDs[uniqPointer] = userIDs[i]
+		}
+	}
+	return userIDs[:uniqPointer+1]
+
+
+
+Указатели и адреса
+
+	Получение адреса переменной: используйте оператор & для получения адреса переменной.
+		i:= 42
+		p := &i          // p - указатель на i
+		fmt.Println(*p)  // выводим значение, на которое указывает p (значение i)                     -- 42
+		fmt.Println(p)   // выводим значение p (адрес i)                                              -- 0xc00001c030
+		fmt.Println(&p)  // выводим адрес p                                                           -- 0xc000012028
+		k := &p          // k - указатель на p (указатель на указатель)                               --
+		fmt.Println(k)   // выводим адрес k                                                           -- 0xc000012028
+		fmt.Println(*k)  // выводим значение k (адрес p)                                              -- 0xc00001c030
+		fmt.Println(**k) // выводим значение указателя, на который указывает k (значение p, адрес i)  -- 42
+
+
+Передача по ссылке
+	func link(a *int) {
+		*a = 5
+	}
+
+	func main() {
+		a := 10
+		fmt.Println("before change ", a)
+		link(&a)
+		fmt.Println("after change ", a)
+	}
+
+
+
+Строка
+	Сплит строки
+		words := strings.Split(strPages, ",")
+		
+	https://code-basics.com/ru/languages/go/lessons/strings-runes
+		При обходе строки for i:=1; i<len(str); i++ str[i] - будет byte 
+		Их можно привести в вид строки через string(str[i]), но если это не ASCII, получится ерунда
+		При обходе строки for range, она автоматически приводится к []rune элементы будут rune
+		Их можно привести в вид строки через string(r)
+
+		Дано: строка a := «mfgah134517095aldrfgvh8h».
+		Вырежьте из строки всё, кроме чисел.
+
+		a := "mfgah134517095aldrfgvh8h"
+		a = strings.TrimFunc(a, func(r rune) bool {
+		   return !unicode.IsNumber(r)
+		})
+		// a = "1345170958"
+
+	
+
+
+
+
+
+Приоритетная очередь
+	package main
+
+	import (
+		"container/heap"
+		"fmt"
+	)
+
+	type element struct {
+		value int
+		count int
+	}
+
+	type priorityQueue []element
+
+	func (q priorityQueue) Len() int           { return len(q) }
+	func (q priorityQueue) Less(i, j int) bool { return q[i].count < q[j].count }
+	func (q priorityQueue) Swap(i, j int)      { q[i], q[j] = q[j], q[i] }
+
+	func (q *priorityQueue) Push(x interface{}) {
+		*q = append(*q, x.(element))
+	}
+
+	func (q *priorityQueue) Pop() interface{} {
+		old := *q
+		n := len(old)
+		item := old[n-1]
+		*q = old[0 : n-1]
+		return item
+	}
+
+	func main() {
+		q := &priorityQueue{
+			{value: 1, count: 5},
+			{value: 2, count: 3},
+			{value: 3, count: 1},
+			{value: 4, count: 4},
+		}
+
+		heap.Init(q)
+
+		// Добавляем новый элемент в кучу.
+		heap.Push(q, element{value: 5, count: 2})
+
+		// Удаляем элементы с наивысшим приоритетом из кучи по одному.
+		for q.Len() > 0 {
+			item := heap.Pop(q).(element)
+			fmt.Printf("Value: %d, Count: %d\n", item.value, item.count)
+		}
+	}
